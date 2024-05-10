@@ -29,3 +29,9 @@ jobs:
         with:
           name: Launcher3.apk 
           path: out/target/product/<device>/system/priv-app/Launcher3/Launcher3.apk 
+
+          # ... other steps 
+- name: Install repo
+  run: |
+    wget https://storage.googleapis.com/git-repo-downloads/repo -O /usr/local/bin/repo
+    chmod a+x /usr/local/bin/repo
