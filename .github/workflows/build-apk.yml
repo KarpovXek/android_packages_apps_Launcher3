@@ -1,27 +1,31 @@
-name: Build APK
+name: Build Launcher3 APK
 
 on: 
   push:
-    branches: [ main ]  # You can adjust the trigger
+    branches: [ fourteen ]  # Adjust the branch name if needed
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3  # Check out code
+      - uses: actions/checkout@v3 
 
       - name: Set up JDK 
         uses: actions/setup-java@v3
         with:
-          java-version: '11'  # Adjust Java version if required
-          distribution: 'temurin'  # Or other Java distributions 
+          java-version: '11'  
+          distribution: 'temurin'
 
-      - name: Build APK
-        run: ./gradlew assembleRelease  # Or assembleDebug for debug build
+      - name: Sync and Build Launcher3 
+        run: |
+          ./repo sync -c --force-sync --no-tags --no-clone-bundle -j$(nproc) # Sync might need customization
+          source build/envsetup.sh
+          lunch aosp_arm64-eng  # Or a relevant target name
+          make -j$(nproc) Launcher3
 
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
-          name: app-release.apk  # Adjust the name
-          path: app/build/outputs/apk/release/app-release.apk  
+          name: Launcher3.apk 
+          path: out/target/product/<device>/system/priv-app/Launcher3/Launcher3.apk 
