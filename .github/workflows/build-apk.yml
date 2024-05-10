@@ -2,7 +2,7 @@ name: Build Launcher3 APK
 
 on: 
   push:
-    branches: [ fourteen ]  # Adjust the branch name if needed
+    branches: [ fourteen ]  
 
 jobs:
   build:
@@ -17,6 +17,11 @@ jobs:
           java-version: '11'  
           distribution: 'temurin'
 
+      - name: Install repo  # Step for installing the repo tool
+        run: |
+          wget https://storage.googleapis.com/git-repo-downloads/repo -O /usr/local/bin/repo 
+          chmod a+x /usr/local/bin/repo
+
       - name: Sync and Build Launcher3 
         run: |
           ./repo sync -c --force-sync --no-tags --no-clone-bundle -j$(nproc) # Sync might need customization
@@ -24,14 +29,4 @@ jobs:
           lunch aosp_arm64-eng  # Or a relevant target name
           make -j$(nproc) Launcher3
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
-        with:
-          name: Launcher3.apk 
-          path: out/target/product/<device>/system/priv-app/Launcher3/Launcher3.apk 
-
-          # ... other steps 
-- name: Install repo
-  run: |
-    wget https://storage.googleapis.com/git-repo-downloads/repo -O /usr/local/bin/repo
-    chmod a+x /usr/local/bin/repo
+      # ...
